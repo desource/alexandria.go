@@ -1,46 +1,64 @@
-package alexandria
+package alex
 
 import (
 	"io"
 
-	"github.com/minio/blake2b-simd"
-
+	"desource.net/alex/base58"
+	blake2b "github.com/minio/blake2b-simd"
 	"golang.org/x/crypto/curve25519"
 )
 
-func GenerateKey(rand io.Reader) (privateKey *Key, err error) {
-	privateKey = (*Key)(new([32]byte))
-	_, err = io.ReadFull(rand, privateKey[:])
-	if err != nil {
-		privateKey = nil
-		return
+// GeneratePrivateKey Generates a private key
+// Returns an error if not enough entorpy
+func GeneratePrivateKey(rand io.Reader) (key PrivateKey, err error) {
+	var n int
+	n, err = io.ReadFull(rand, key[:])
+	if err == nil && n != len(key) {
+		err = ErrInsufficientEntropy
 	}
 	return
 }
 
-type Key [32]byte
+type PrivateKey [32]byte
 
-func (k *Key) String() string {
-	return base58Encode(k[:])
+func (k PrivateKey) String() string {
+	return base58.Encode(k[:])
 }
 
-func DecodeKey(v string) (key *Key, err error) {
-	// TODO validate key
-	k := base58Decode(v)
-	key = (*Key)(new([32]byte))
+func DecodePrivateKey(v string) (key PrivateKey, err error) {
+	if v == "" {
+		return key, ErrEmptyKey
+	}
+	k := base58.Decode(v) // TODO improve key validation
 	copy(key[:], k)
 	return
 }
 
-func (privateKey *Key) PublicKey() (publicKey *Key) {
-	publicKey = (*Key)(new([32]byte))
-	curve25519.ScalarBaseMult((*[32]byte)(publicKey), (*[32]byte)(privateKey))
+func (privateKey PrivateKey) PublicKey() (publicKey PublicKey) {
+	curve25519.ScalarBaseMult((*[32]byte)(&publicKey), (*[32]byte)(&privateKey))
 	return
 }
 
-func (privateKey *Key) SharedKey(peersPublicKey *Key) *Key {
+func (privateKey PrivateKey) sharedKey(peersPublicKey *PublicKey) sharedKey {
 	var tmpKey [32]byte
-	curve25519.ScalarMult(&tmpKey, (*[32]byte)(privateKey), (*[32]byte)(peersPublicKey))
-	sharedKey := blake2b.Sum256(tmpKey[:])
-	return (*Key)(&sharedKey)
+	curve25519.ScalarMult(&tmpKey, (*[32]byte)(&privateKey), (*[32]byte)(peersPublicKey))
+	key := blake2b.Sum256(tmpKey[:])
+	return (sharedKey)(key)
 }
+
+type PublicKey [32]byte
+
+func DecodePublicKey(v string) (key PublicKey, err error) {
+	if v == "" {
+		return key, ErrEmptyKey
+	}
+	k := base58.Decode(v) // TODO validate key
+	copy(key[:], k)
+	return
+}
+
+func (k PublicKey) String() string {
+	return base58.Encode(k[:])
+}
+
+type sharedKey [32]byte

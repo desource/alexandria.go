@@ -1,4 +1,4 @@
-package alexandria
+package alex
 
 import (
 	"crypto/rand"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestGenerateKey(t *testing.T) {
-	privateKey, err := GenerateKey(rand.Reader)
+	privateKey, err := GeneratePrivateKey(rand.Reader)
 	if err != nil {
 		t.Error(err)
 	}
@@ -34,14 +34,14 @@ func TestGenerateKey(t *testing.T) {
 }
 
 func TestDecodeKey(t *testing.T) {
-	privateKey, err := GenerateKey(rand.Reader)
+	privateKey, err := GeneratePrivateKey(rand.Reader)
 	if err != nil {
 		t.Error(err)
 	}
 
 	v := privateKey.String()
 
-	decodedKey, err := DecodeKey(v)
+	decodedKey, err := DecodePrivateKey(v)
 	if err != nil {
 		t.Error(err)
 	}
@@ -52,18 +52,18 @@ func TestDecodeKey(t *testing.T) {
 }
 
 func TestSharedKey(t *testing.T) {
-	privateKey1, err := GenerateKey(rand.Reader)
+	privateKey1, err := GeneratePrivateKey(rand.Reader)
 	if err != nil {
 		t.Error(err)
 	}
 
-	privateKey2, err := GenerateKey(rand.Reader)
+	privateKey2, err := GeneratePrivateKey(rand.Reader)
 	if err != nil {
 		t.Error(err)
 	}
 	publicKey2 := privateKey2.PublicKey()
 
-	shared := privateKey1.SharedKey(publicKey2)
+	shared := privateKey1.SharedKey(&publicKey2)
 
 	t.Logf("Generated shared key %s", shared)
 }

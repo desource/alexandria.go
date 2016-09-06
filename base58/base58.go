@@ -1,4 +1,4 @@
-package alexandria
+package base58
 
 import (
 	"math/big"
@@ -9,7 +9,7 @@ const alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 var bigRadix = big.NewInt(58)
 var bigZero = big.NewInt(0)
 
-func base58Decode(b string) []byte {
+func Decode(b string) []byte {
 	answer := big.NewInt(0)
 	j := big.NewInt(1)
 
@@ -40,7 +40,7 @@ func base58Decode(b string) []byte {
 	return val
 }
 
-func base58Encode(b []byte) string {
+func Encode(b []byte) string {
 	x := new(big.Int)
 	x.SetBytes(b)
 
