@@ -6,7 +6,7 @@
 // http://creativecommons.org/publicdomain/zero/1.0/
 
 // Package blake2b implements BLAKE2b cryptographic hash function.
-package blake2b // "desource.net/alex/blake2b"
+package blake2b // "desource.net/alex/pkg/blake2b"
 
 import (
 	"encoding/binary"

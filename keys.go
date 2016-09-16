@@ -3,9 +3,9 @@ package alex
 import (
 	"io"
 
-	"desource.net/alex/base58"
-	"desource.net/alex/blake2b"
-	"desource.net/alex/curve25519"
+	"desource.net/alex/pkg/base58"
+	"desource.net/alex/pkg/blake2b"
+	"desource.net/alex/pkg/curve25519"
 )
 
 // GeneratePrivateKey Generates a private key
