@@ -93,11 +93,11 @@ func main() {
 	case "v", "version", "-v", "--version":
 		Version(os.Stdout)
 
-	case "", "h", "help":
+	case "", "h", "help", "-h", "--help":
 		DefaultHelp(os.Stdout)
 
 	default:
-		err = fmt.Errorf("unexpected command `%s`", cmd)
+		err = fmt.Errorf("unexpected command '%s'", cmd)
 	}
 
 	if err != nil {

@@ -4,8 +4,8 @@ import (
 	"io"
 
 	"desource.net/alex/base58"
-	blake2b "github.com/minio/blake2b-simd"
-	"golang.org/x/crypto/curve25519"
+	"desource.net/alex/blake2b"
+	"desource.net/alex/curve25519"
 )
 
 // GeneratePrivateKey Generates a private key

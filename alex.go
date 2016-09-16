@@ -1,4 +1,4 @@
-package alex
+package alex // import "desource.net/alex"
 
 import "errors"
 
