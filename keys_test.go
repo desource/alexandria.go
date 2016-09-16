@@ -63,7 +63,7 @@ func TestSharedKey(t *testing.T) {
 	}
 	publicKey2 := privateKey2.PublicKey()
 
-	shared := privateKey1.SharedKey(&publicKey2)
+	shared := privateKey1.sharedKey(&publicKey2)
 
 	t.Logf("Generated shared key %s", shared)
 }
