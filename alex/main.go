@@ -1,4 +1,4 @@
-package main
+package main // import "desource.net/alex/alex"
 
 import (
 	"crypto/rand"

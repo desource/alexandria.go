@@ -1,4 +1,4 @@
-package base58
+package base58 // import "desource.net/alex/base58"
 
 import (
 	"math/big"
