@@ -2,8 +2,12 @@ package main
 
 import (
 	"bytes"
+	"crypto/rand"
 	"encoding/base64"
+	"fmt"
 	"testing"
+
+	"desource.net/alex"
 )
 
 func TestGeneratePrivateKeys(t *testing.T) {
@@ -98,6 +102,78 @@ func TestDecryptMessage(t *testing.T) {
 	}
 	if out.String() != exampleMsg {
 		t.Errorf("Expected to be equal\n'%s'\n'%s'", out.String(), exampleMsg)
+	}
+}
+
+func TestEncryptAndDecryptMultipeRecipients(t *testing.T) {
+	in := bytes.NewBufferString(exampleMsg)
+	var enc bytes.Buffer
+	var dec bytes.Buffer
+
+	defer resetKeys()
+
+	privateKey1, _ := alex.GeneratePrivateKey(rand.Reader)
+	publicKey1 := privateKey1.PublicKey()
+	privateKey2, _ := alex.GeneratePrivateKey(rand.Reader)
+	publicKey2 := privateKey2.PublicKey()
+
+	peerKeys = []string{
+		publicKey1.String(),
+		publicKey2.String(),
+		publicKey1.String(),
+		publicKey2.String(),
+		publicKey1.String(),
+		publicKey2.String(),
+		publicKey1.String(),
+		publicKey2.String(),
+		publicKey1.String(),
+		publicKey2.String(),
+		publicKey1.String(),
+		publicKey2.String(),
+		publicKey1.String(),
+		publicKey2.String(),
+		publicKey1.String(),
+		publicKey2.String(),
+		examplePublicKey,
+	}
+
+	privateKey = examplePrivateKey
+	if err := Encrypt(in, &enc); err != nil {
+		t.Fatalf("Unexpected encrypt error: %s", err)
+	}
+
+	fmt.Println("Message:", base64.RawStdEncoding.EncodeToString(enc.Bytes()), "\n")
+
+	privateKey = privateKey1.String()
+	tmpEncode := bytes.NewBuffer(enc.Bytes())
+	if err := Decrypt(tmpEncode, &dec); err != nil {
+		t.Fatalf("Unexpected decrypt error: %s", err)
+	}
+
+	if dec.String() != exampleMsg {
+		t.Fatalf("Message not equal\n`%s`\n`%s`", dec.String(), exampleMsg)
+	}
+
+	dec.Reset()
+	privateKey = privateKey2.String()
+	tmpEncode = bytes.NewBuffer(enc.Bytes())
+	if err := Decrypt(tmpEncode, &dec); err != nil {
+		t.Fatalf("Unexpected decrypt error: %s", err)
+	}
+
+	if dec.String() != exampleMsg {
+		t.Fatalf("Message not equal\n`%s`\n`%s`", dec.String(), exampleMsg)
+	}
+
+	dec.Reset()
+	privateKey = examplePrivateKey
+	tmpEncode = bytes.NewBuffer(enc.Bytes())
+	if err := Decrypt(tmpEncode, &dec); err != nil {
+		t.Fatalf("Unexpected decrypt error: %s", err)
+	}
+
+	if dec.String() != exampleMsg {
+		t.Fatalf("Message not equal\n`%s`\n`%s`", dec.String(), exampleMsg)
 	}
 }
 

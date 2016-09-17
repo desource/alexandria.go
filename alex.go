@@ -8,6 +8,9 @@ var (
 	ErrFailedToDecrypt     = errors.New("failed to decrypt")
 )
 
-type sessionKey [32]byte
+const (
+	sessionKeyLen          = 32
+	maxRecipientCountLen16 = 3
+)
 
-const maxRecipientCountLen16 = 3
+type sessionKey [sessionKeyLen]byte

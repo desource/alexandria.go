@@ -26,6 +26,7 @@ var (
 	debugMode bool
 )
 
+// TODO: Add support for recrypt-ing
 func main() {
 	proc := filepath.Base(os.Args[0])
 	var err error
@@ -144,11 +145,10 @@ func (keys *recipientKeys) Set(v string) error {
 }
 
 func (keys *recipientKeys) DecodeKeys() (publicKeys []*alex.PublicKey, err error) {
-	var publicKey alex.PublicKey
 	for _, key := range *keys {
-		publicKey, err = alex.DecodePublicKey(key)
+		publicKey, err := alex.DecodePublicKey(key)
 		if err != nil {
-			return
+			return nil, err
 		}
 		publicKeys = append(publicKeys, &publicKey)
 	}

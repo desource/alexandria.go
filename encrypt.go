@@ -30,7 +30,7 @@ func Encrypt(plaintext []byte, privateKey *PrivateKey, peerPublicKeys ...*Public
 	maxLen := nonceLen +
 		len(publicKey) +
 		maxRecipientCountLen16 +
-		(1 * len(sessionKey)) +
+		(len(peerPublicKeys) * len(sessionKey)) +
 		aesgcm.Overhead() +
 		len(plaintext)
 
@@ -50,21 +50,28 @@ func Encrypt(plaintext []byte, privateKey *PrivateKey, peerPublicKeys ...*Public
 	offset = offset + l
 	out = out[:maxLen-(maxRecipientCountLen16-l)]
 
-	// For each recpient
-	for _, peerPublicKey := range peerPublicKeys {
+	iv := make([]byte, aes.BlockSize)
+
+	// For each recipient
+	for r, peerPublicKey := range peerPublicKeys {
 		shared := privateKey.sharedKey(peerPublicKey)
+
 		sharedAes, err := aes.NewCipher(shared[:])
 		if err != nil {
 			return nil, err
 		}
-		iv := make([]byte, aes.BlockSize)
-		copy(iv, []byte(nonce)) // TODO: xor with a counter for each recpient
+		copy(iv, []byte(nonce))
+		// xor with a counter for each recipient
+		iv[0] = nonce[0] ^ byte(r)
+		iv[1] = nonce[1] ^ byte(r>>1)
+		iv[2] = nonce[2] ^ byte(r>>2)
+		iv[3] = nonce[3] ^ byte(r>>3)
 		stream := cipher.NewCTR(sharedAes, iv)
 		stream.XORKeyStream(out[offset:], sessionKey[:])
-	}
 
-	// update offset
-	offset = offset + (len(peerPublicKeys) * len(sessionKey))
+		// update offset
+		offset = offset + len(sessionKey)
+	}
 
 	aesgcm.Seal(out[offset:offset], nonce[:aesgcm.NonceSize()], plaintext, nil)
 
