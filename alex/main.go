@@ -75,7 +75,7 @@ func main() {
 		}
 		err = Encrypt(os.Stdin, os.Stdout)
 
-		// TODO specific help
+		// TODO encrypt specific help
 
 	case "dec", "decrypt":
 		flags := flag.NewFlagSet("decrypt", flag.ContinueOnError)
