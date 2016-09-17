@@ -13,8 +13,7 @@ import (
 	"desource.net/alex"
 )
 
-// TODO set build time
-const VERSION = "DEV"
+const version = "0.1"
 
 var (
 	ErrMissingPrivateKey = errors.New("missing --private-key")
@@ -233,7 +232,7 @@ func Decrypt(in io.Reader, out io.Writer) error {
 }
 
 func Version(out io.Writer) {
-	fmt.Fprintln(out, `alex version:`, VERSION)
+	fmt.Fprintln(out, `alex version:`, version)
 }
 
 func DefaultHelp(out io.Writer) {

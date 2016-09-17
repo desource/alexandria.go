@@ -3,8 +3,8 @@ package alex // import "desource.net/alex"
 import "errors"
 
 var (
-	ErrEmptyKey            = errors.New("Empty key")
-	ErrInsufficientEntropy = errors.New("Insufficient random entropy")
+	ErrEmptyKey            = errors.New("empty key")
+	ErrInsufficientEntropy = errors.New("insufficient random entropy")
 	ErrFailedToDecrypt     = errors.New("failed to decrypt")
 )
 
