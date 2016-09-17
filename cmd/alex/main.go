@@ -1,4 +1,4 @@
-package main // import "desource.net/alex/alex"
+package main // import "desource.net/alex/cmd/alex"
 
 import (
 	"crypto/rand"
@@ -13,7 +13,7 @@ import (
 	"desource.net/alex"
 )
 
-const version = "0.1"
+const version = "0.1-dev"
 
 var (
 	ErrMissingPrivateKey = errors.New("missing --private-key")
